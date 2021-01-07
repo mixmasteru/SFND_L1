@@ -58,7 +58,7 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr &viewer) {
     //renderPointCloud(viewer, segmentCloud.second, "planeCloud", Color(0, 1, 0));
 
     std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloudClusters;
-    cloudClusters = pointProcessor.Clustering(segmentCloud.first, 1.0,3, 30);
+    cloudClusters = pointProcessor.Clustering(segmentCloud.first, 1.0, 3, 30);
 
     int clusterId = 0;
     std::vector<Color> colors = {Color(1, 0, 0), Color(0, 1, 0), Color(0, 0, 1)};
@@ -68,11 +68,26 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr &viewer) {
         pointProcessor.numPoints(cluster);
         renderPointCloud(viewer, cluster, "obstCloud" + std::to_string(clusterId), colors[clusterId]);
         Box box = pointProcessor.BoundingBox(cluster);
-        renderBox(viewer,box,clusterId,colors[clusterId],0.5);
+        renderBox(viewer, box, clusterId, colors[clusterId], 0.5);
         ++clusterId;
     }
 }
 
+void cityBlock(pcl::visualization::PCLVisualizer::Ptr &viewer) {
+    // ----------------------------------------------------
+    // -----Open 3D viewer and display City Block     -----
+    // ----------------------------------------------------
+
+    ProcessPointClouds<pcl::PointXYZI> *pointProcessorI = new ProcessPointClouds<pcl::PointXYZI>();
+    pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI->loadPcd(
+            "../src/sensors/data/pcd/data_1/0000000000.pcd");
+    // Experiment with the ? values and find what works best
+    pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessorI->FilterCloud(inputCloud,
+                                                                                    0.01f,
+                                                                                    Eigen::Vector4f(-30, -6.5, -3, 1),
+                                                                                    Eigen::Vector4f(30, 6.5, 10, 1));
+    renderPointCloud(viewer, filterCloud, "filterCloud");
+}
 
 //setAngle: SWITCH CAMERA ANGLE {XY, TopDown, Side, FPS}
 void initCamera(CameraAngle setAngle, pcl::visualization::PCLVisualizer::Ptr &viewer) {
@@ -109,7 +124,8 @@ int main(int argc, char **argv) {
     pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
-    simpleHighway(viewer);
+    //simpleHighway(viewer);
+    cityBlock(viewer);
 
     while (!viewer->wasStopped()) {
         viewer->spinOnce();
