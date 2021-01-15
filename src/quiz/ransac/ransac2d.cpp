@@ -44,7 +44,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData() {
 pcl::PointCloud<pcl::PointXYZ>::Ptr CreateData3D() {
     ProcessPointClouds<pcl::PointXYZ> pointProcessor;
     // TODO: fix path
-    return pointProcessor.loadPcd("../../../sensors/data/pcd/simpleHighway.pcd");
+    return pointProcessor.loadPcd("../src/sensors/data/pcd/simpleHighway.pcd");
 }
 
 
@@ -61,7 +61,7 @@ std::unordered_set<int> Ransac(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud, int ma
     std::unordered_set<int> inliersResult;
     srand(time(NULL));
 
-    // TODO: Fill in this function
+    // Fill in this function
 
     // For max iterations
     while (maxIterations--) {
